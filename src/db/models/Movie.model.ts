@@ -15,8 +15,14 @@ export class Movie extends BaseEntity{
     name: string;
 
     @Column()
+    image: string;
+    
+    @Column()
     plot_summary: string;
 
     @Column()
-    duration: number;
+    assignee: string;
+    
+    @Column()
+    tickets: number;
 }
