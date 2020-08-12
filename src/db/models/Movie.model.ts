@@ -9,6 +9,7 @@ import {
 @Entity('movies')
 export class Movie extends BaseEntity{
     @PrimaryGeneratedColumn()
+    @PrimaryColumn()
     id: number;
 
     @Column()
@@ -16,13 +17,13 @@ export class Movie extends BaseEntity{
 
     @Column()
     image: string;
-    
+
     @Column()
     plot_summary: string;
 
     @Column()
     assignee: string;
-    
+
     @Column()
     tickets: number;
 }

@@ -58,7 +58,7 @@ export class CreateMovieTable1597245783001 implements MigrationInterface {
                  {
                     name: "password",
                     type: "varchar",
-                    
+
                 }
             ]
         }), true);

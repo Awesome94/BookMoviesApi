@@ -2,7 +2,6 @@ import {
     BaseEntity,
     Column,
     Entity,
-    PrimaryGeneratedColumn,
     PrimaryColumn
 } from "typeorm";
 
@@ -10,9 +9,10 @@ import {
 
 export class User extends BaseEntity{
     @Column()
+    @PrimaryColumn()
     username: string;
 
     @Column()
     password: string;
-    
+
 }
