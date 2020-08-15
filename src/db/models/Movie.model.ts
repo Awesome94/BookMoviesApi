@@ -25,5 +25,11 @@ export class Movie extends BaseEntity{
     assignee: string;
 
     @Column()
+    account_owner: string;
+
+    @Column()
     tickets: number;
+
+    @Column()
+    identifier: string;
 }

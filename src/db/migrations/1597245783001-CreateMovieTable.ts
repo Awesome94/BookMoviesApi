@@ -29,6 +29,16 @@ export class CreateMovieTable1597245783001 implements MigrationInterface {
                     isNullable: false,
                 },
                 {
+                    name: "account_owner",
+                    type: "text",
+                    isNullable: false,
+                },
+                {
+                    name: "identifier",
+                    type: "varchar",
+                    isNullable: false,
+                },
+                {
                     name: "plot_summary",
                     type: "text",
                     isNullable: false
@@ -65,7 +75,7 @@ export class CreateMovieTable1597245783001 implements MigrationInterface {
         queryRunner.clearSqlMemory();
 
         const foreignKey = new TableForeignKey({
-            columnNames: ["assignee"],
+            columnNames: ["account_owner"],
             referencedColumnNames: ["username"],
             referencedTableName: "users",
             onDelete: "CASCADE"
