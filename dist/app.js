@@ -41,57 +41,79 @@ const jwt = __importStar(require("jsonwebtoken"));
 const requireJwtMiddleware_1 = require("./middleware/requireJwtMiddleware");
 const dotenv_1 = __importDefault(require("dotenv"));
 const db_1 = require("./db/db");
+const cors_1 = __importDefault(require("cors"));
 db_1.connect();
 dotenv_1.default.config();
 const app = express_1.default();
 exports.app = app;
+app.use(cors_1.default());
 app.use(bodyParser.json({
     limit: '50mb',
     verify(req, res, buf, encoding) {
         req.rawBody = buf;
     }
 }));
-app.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    return res.status(200).send({ "Welcome": "POST to /api/v1/register to get started" });
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
+app.post('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    return res.status(200).send({ "Welcomed": "POST to /api/v1/register to get started" });
 }));
-app.post('/user/register', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const userExists = yield User_model_1.User.findOne({ username: req.body.username });
+app.post('/api/v1/register/:username/:password', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const userExists = yield User_model_1.User.findOne({ username: req.params.username });
     if (userExists)
         return res.status(400).send('User already exists');
     const salt = yield bcrypt_1.genSalt(10);
-    const hashPassword = yield bcrypt_1.hash(req.body.password, salt);
+    const hashPassword = yield bcrypt_1.hash(req.params.password, salt);
     const user = new User_model_1.User();
-    user.username = req.body.username,
+    user.username = req.params.username,
         user.password = hashPassword;
     try {
         const savedUser = yield user.save();
-        res.send({ user: user.username });
+        res.status(201).send({ "Success": "Account created successfully" });
     }
     catch (err) {
         res.status(400).send(err);
     }
 }));
-app.post('/login/:username/:password', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.post('/api/v1/login/:username/:password', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield User_model_1.User.findOne({ username: req.params.username });
     if (!user)
         return res.status(400).send('Username or Password is wrong');
     const validpass = yield bcrypt_1.compare(req.params.password, user.password);
     if (!validpass)
         return res.status(400).send('Password is wrong');
-    const token = jwt.sign({ _id: user.username }, process.env.TOKEN_SECRET);
-    res.send({ "Access Token": token });
+    const token = jwt.sign({ username: user.username }, process.env.TOKEN_SECRET);
+    res.send({ "Access Token": token, "username": user.username });
 }));
-app.post('/book', requireJwtMiddleware_1.requireJwtMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.post('/api/v1/book', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const movieBooked = yield Movie_model_1.Movie.findOne({ name: req.body.name });
+    if (movieBooked)
+        return res.status(400).send('Movie already booked');
     const movie = new Movie_model_1.Movie();
     movie.name = req.body.name;
-    movie.plot_summary = req.body.summary;
+    movie.plot_summary = req.body.plot_summary;
     movie.assignee = req.body.assignee;
-    movie.tickets = req.body.tickets;
+    movie.tickets = req.body.numberOftickets;
+    movie.account_owner = 'guest';
+    movie.identifier = req.body.imdbID;
+    movie.year = req.body.year;
+    movie.image = req.body.image;
     yield movie.save();
-    res.send(movie);
+    movie.identifier = movie.identifier.toString() + movie.id.toString();
+    yield movie.save();
+    res.status(201).send({ "success": `Movie booked successfully with Identifier: ${movie.identifier}` });
 }));
-app.get('/booked/:username', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const movies = yield Movie_model_1.Movie.find();
-    res.send(movies);
+app.get('/api/v1/booked/:identifier', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const movies = yield Movie_model_1.Movie.find({ identifier: req.params.identifier });
+    res.status(200).send(movies);
+}));
+app.get('/api/v1/book/all', requireJwtMiddleware_1.requireJwtMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("we made it here", req.user);
+    const username = req.user.username || req.user._id;
+    const movies = yield Movie_model_1.Movie.find({ account_owner: username });
+    res.status(200).send(movies);
 }));
 //# sourceMappingURL=app.js.map

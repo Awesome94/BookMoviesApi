@@ -30,7 +30,7 @@ function requireJwtMiddleware(req, res, next) {
         return res.status(401).send({ error: "Access Denied, Missing token" });
     try {
         const verified = jwt.verify(token, process.env.TOKEN_SECRET);
-        // req.user = verified;
+        req.user = verified;
         next();
     }
     catch (err) {

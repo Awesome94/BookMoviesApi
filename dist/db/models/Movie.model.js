@@ -36,8 +36,20 @@ __decorate([
 ], Movie.prototype, "assignee", void 0);
 __decorate([
     typeorm_1.Column(),
+    __metadata("design:type", String)
+], Movie.prototype, "account_owner", void 0);
+__decorate([
+    typeorm_1.Column(),
     __metadata("design:type", Number)
 ], Movie.prototype, "tickets", void 0);
+__decorate([
+    typeorm_1.Column(),
+    __metadata("design:type", String)
+], Movie.prototype, "identifier", void 0);
+__decorate([
+    typeorm_1.Column(),
+    __metadata("design:type", String)
+], Movie.prototype, "year", void 0);
 Movie = __decorate([
     typeorm_1.Entity('movies')
 ], Movie);

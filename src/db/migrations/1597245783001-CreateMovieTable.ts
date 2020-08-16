@@ -36,7 +36,7 @@ export class CreateMovieTable1597245783001 implements MigrationInterface {
                 {
                     name: "identifier",
                     type: "varchar",
-                    isNullable: false,
+                    isNullable: true,
                 },
                 {
                     name: "plot_summary",

@@ -32,4 +32,7 @@ export class Movie extends BaseEntity{
 
     @Column()
     identifier: string;
+
+    @Column()
+    year: string;
 }

@@ -40,6 +40,16 @@ class CreateMovieTable1597245783001 {
                         isNullable: false,
                     },
                     {
+                        name: "account_owner",
+                        type: "text",
+                        isNullable: false,
+                    },
+                    {
+                        name: "identifier",
+                        type: "varchar",
+                        isNullable: true,
+                    },
+                    {
                         name: "plot_summary",
                         type: "text",
                         isNullable: false
@@ -72,7 +82,7 @@ class CreateMovieTable1597245783001 {
             }), true);
             queryRunner.clearSqlMemory();
             const foreignKey = new typeorm_1.TableForeignKey({
-                columnNames: ["assignee"],
+                columnNames: ["account_owner"],
                 referencedColumnNames: ["username"],
                 referencedTableName: "users",
                 onDelete: "CASCADE"
