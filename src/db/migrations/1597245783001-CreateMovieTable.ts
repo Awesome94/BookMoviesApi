@@ -50,7 +50,7 @@ export class CreateMovieTable1597245783001 implements MigrationInterface {
                 },
                 {
                     name: "year",
-                    type: "integer",
+                    type: "text",
                     isNullable: false
                 }
             ]
@@ -73,14 +73,6 @@ export class CreateMovieTable1597245783001 implements MigrationInterface {
             ]
         }), true);
         queryRunner.clearSqlMemory();
-
-        const foreignKey = new TableForeignKey({
-            columnNames: ["account_owner"],
-            referencedColumnNames: ["username"],
-            referencedTableName: "users",
-            onDelete: "CASCADE"
-        });
-        await queryRunner.createForeignKey("movies", foreignKey);
     }
 
     public async down(queryRunner: QueryRunner): Promise<any> {
