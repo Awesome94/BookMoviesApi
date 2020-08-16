@@ -38,6 +38,8 @@ app.post('/', async (req:Request, res:Response)=>{
 })
 
 app.post('/api/v1/register/:username/:password', async (req:Request, res:Response)=>{
+    console.log(req.body, "this is awesome body for the request object ")
+
     const userExists = await User.findOne({username: req.params.username})
 
     if(userExists) return res.status(400).send({'error':'User already registered, Login to continue'});
@@ -51,6 +53,14 @@ app.post('/api/v1/register/:username/:password', async (req:Request, res:Respons
 
     try{
         const savedUser = await user.save()
+        if(req.body.guestMovies.length){
+            const guestMovies = req.body.guestMovies
+             guestMovies.map(async(MovieId:string)=>{
+                const currentMovie = await Movie.findOne({identifier: MovieId})
+                currentMovie.account_owner = req.params.username
+                currentMovie.save()
+            })
+        }
         res.status(201).send({"Success": "Account created successfully"})
     }catch(err){
         res.status(400).send(err);
@@ -64,16 +74,20 @@ app.post('/api/v1/login/:username/:password', async (req:Request, res:Response)=
     if(!validpass) return res.status(400).send('Password is wrong');
 
     const token = jwt.sign({username: user.username}, process.env.TOKEN_SECRET);
+    if(req.body.guestMovies.length){
+        const guestMovies = req.body.guestMovies
+         guestMovies.map(async(MovieId:string)=>{
+            const currentMovie = await Movie.findOne({identifier: MovieId})
+            currentMovie.account_owner = req.params.username
+            currentMovie.save()
+        })
+    }
     res.send({"Access Token":token, "username":user.username});
 
 });
 
 
 app.post('/api/v1/book', async (req:Request, res:Response)=> {
-    const movieBooked = await Movie.findOne({name: req.body.name})
-
-    if(movieBooked) return res.status(400).send('Movie already booked');
-
     const movie  = new Movie();
     movie.name = req.body.name;
     movie.plot_summary = req.body.plot_summary;
@@ -86,7 +100,7 @@ app.post('/api/v1/book', async (req:Request, res:Response)=> {
     await movie.save();
     movie.identifier = movie.identifier.toString() + movie.id.toString()
     await movie.save();
-    res.status(201).send({"success": `Movie booked successfully with Identifier: ${movie.identifier}`});
+    res.status(201).send({"success": `${movie.identifier}`});
 });
 
 
