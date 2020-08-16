@@ -64,7 +64,7 @@ app.post('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 app.post('/api/v1/register/:username/:password', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const userExists = yield User_model_1.User.findOne({ username: req.params.username });
     if (userExists)
-        return res.status(400).send('User already exists');
+        return res.status(400).send({ 'error': 'User already registered, Login to continue' });
     const salt = yield bcrypt_1.genSalt(10);
     const hashPassword = yield bcrypt_1.hash(req.params.password, salt);
     const user = new User_model_1.User();
@@ -81,7 +81,7 @@ app.post('/api/v1/register/:username/:password', (req, res) => __awaiter(void 0,
 app.post('/api/v1/login/:username/:password', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield User_model_1.User.findOne({ username: req.params.username });
     if (!user)
-        return res.status(400).send('Username or Password is wrong');
+        return res.status(400).send({ 'error': 'account does not exists, register to continue' });
     const validpass = yield bcrypt_1.compare(req.params.password, user.password);
     if (!validpass)
         return res.status(400).send('Password is wrong');
@@ -97,7 +97,7 @@ app.post('/api/v1/book', (req, res) => __awaiter(void 0, void 0, void 0, functio
     movie.plot_summary = req.body.plot_summary;
     movie.assignee = req.body.assignee;
     movie.tickets = req.body.numberOftickets;
-    movie.account_owner = 'guest';
+    movie.account_owner = req.body.username || 'guest';
     movie.identifier = req.body.imdbID;
     movie.year = req.body.year;
     movie.image = req.body.image;

@@ -61,7 +61,7 @@ class CreateMovieTable1597245783001 {
                     },
                     {
                         name: "year",
-                        type: "integer",
+                        type: "text",
                         isNullable: false
                     }
                 ]
@@ -81,13 +81,6 @@ class CreateMovieTable1597245783001 {
                 ]
             }), true);
             queryRunner.clearSqlMemory();
-            const foreignKey = new typeorm_1.TableForeignKey({
-                columnNames: ["account_owner"],
-                referencedColumnNames: ["username"],
-                referencedTableName: "users",
-                onDelete: "CASCADE"
-            });
-            yield queryRunner.createForeignKey("movies", foreignKey);
         });
     }
     down(queryRunner) {

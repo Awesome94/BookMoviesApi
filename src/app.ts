@@ -40,7 +40,7 @@ app.post('/', async (req:Request, res:Response)=>{
 app.post('/api/v1/register/:username/:password', async (req:Request, res:Response)=>{
     const userExists = await User.findOne({username: req.params.username})
 
-    if(userExists) return res.status(400).send('User already exists');
+    if(userExists) return res.status(400).send({'error':'User already registered, Login to continue'});
 
     const salt = await genSalt(10);
     const hashPassword = await hash(req.params.password, salt);
@@ -59,7 +59,7 @@ app.post('/api/v1/register/:username/:password', async (req:Request, res:Respons
 
 app.post('/api/v1/login/:username/:password', async (req:Request, res:Response)=>{
     const user = await User.findOne({username: req.params.username})
-    if(!user) return res.status(400).send('Username or Password is wrong');
+    if(!user) return res.status(400).send({'error': 'account does not exists, register to continue'});
     const validpass = await compare(req.params.password, user.password);
     if(!validpass) return res.status(400).send('Password is wrong');
 
